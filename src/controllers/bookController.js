@@ -56,41 +56,35 @@ const createBook = async function (req, res) {
 
 const getBooks = async function (req, res) {
     try {
-        if (req.query) {
-            let { userId, category, subcategory } = req.query
-            let obj = {}
 
-            if (userId) {
-                obj.userId = userId
-            }
-            if (category) {
-                obj.category = category
-            }
-            if (subcategory) {
-                obj.subcategory = subcategory
-            }
+        let { userId, category, subcategory } = req.query
+        let obj = {}
 
-
-            obj.isDeleted = false
-            const bookDetals = await bookModel.find(obj).select({ title: 1, excerpt: 1, userId: 1, category: 1, subcategory: 1, reviews: 1, releasedAt: 1 })
-            if (bookDetals.length == 0) {
-                return res.status(404).send({ status: false, msg: "No book found for given data" })
-            }
-            else {
-                function alfaOrder(obj1, obj2) {
-                    if (obj1.title < obj2.title) return -1
-                    if (obj1.title > obj2.title) return 1
-                    return 0
-                }
-                bookDetals.sort(alfaOrder)
-                return res.status(200).send({ status: true, message: 'Success', data: bookDetals })
-            }
-        } else {
-            const allBooks = await bookModel.find({ isDeleted: false })
-            allBooks.sort(alfaOrder)
-            return res.status(200).send({ status: true, message: 'Success', data: allBooks })
+        if (userId) {
+            obj.userId = userId
+        }
+        if (category) {
+            obj.category = category
+        }
+        if (subcategory) {
+            obj.subcategory = subcategory
         }
 
+
+        obj.isDeleted = false
+        const bookDetals = await bookModel.find(obj).select({ title: 1, excerpt: 1, userId: 1, category: 1, subcategory: 1, reviews: 1, releasedAt: 1 })
+        if (bookDetals.length == 0) {
+            return res.status(404).send({ status: false, msg: "No book found for given data" })
+        }
+        else {
+            function alfaOrder(obj1, obj2) {
+                if (obj1.title < obj2.title) return -1
+                if (obj1.title > obj2.title) return 1
+                return 0
+            }
+            bookDetals.sort(alfaOrder)
+            return res.status(200).send({ status: true, message: 'Success', data: bookDetals })
+        }
     }
     catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
